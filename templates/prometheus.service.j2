@@ -1,0 +1,32 @@
+[Unit]
+Requires=docker.service
+After=docker.service
+
+[Service]
+ExecStartPre=-/usr/bin/docker rm --force %N
+ExecStart=/usr/bin/docker run --rm \
+  --user root \
+  --name=%N \
+  --publish={{ listen_port }}:9090 \
+  --volume={{ prometheus_dir }}:/etc/prometheus:rw \
+  --volume={{ prometheus_dir }}/data:/data:rw \
+  --volume={{ prometheus_dir }}/alert-rules:/prometheus/alert-rules:rw \
+  {{ prometheus_image }} \
+  --config.file=/etc/prometheus/prometheus.yml \
+  --storage.tsdb.retention.time={{ tsdb_retention_time }} \
+  --storage.tsdb.retention.size={{ tsdb_retention_size }} \
+  --web.enable-lifecycle \
+{% if allow_remote_writes %}
+  --web.enable-remote-write-receiver \
+{% endif %}
+  --web.external-url='{{ url_path }}'
+ExecReload=curl -X POST http://{{ listen_address }}/-/reload
+ExecStop=curl -X POST http://{{ listen_address }}/-/quit
+ExecStopPost=-/usr/bin/docker stop %N
+Restart=always
+StartLimitInterval=0
+RestartSec=10
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target

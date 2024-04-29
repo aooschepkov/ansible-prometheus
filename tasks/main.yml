@@ -1,0 +1,7 @@
+---
+# tasks file for ansible-prometheus
+- name: install prometheus
+  include_tasks:
+    file: install.yml
+    apply:
+      become: true

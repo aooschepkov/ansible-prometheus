@@ -1,0 +1,19 @@
+---
+# defaults file for ansible-prometheus
+prometheus_image: [REDACTED]/prom/prometheus:v2.51.1
+
+prometheus_dir: /data/prometheus
+
+tsdb_retention_size: 25GB
+tsdb_retention_time: 30d
+
+url_path: "/prometheus"
+listen_port: 9090
+listen_address: "{{ ansible_host }}:{{ listen_port }}{{ url_path }}"
+
+prometheus_global:
+  scrape_interval: 1m
+  evaluation_interval: 1m
+  scrape_timeout: 10s
+
+allow_remote_writes: false
