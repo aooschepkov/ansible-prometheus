@@ -1,6 +1,6 @@
 ---
 # defaults file for ansible-prometheus
-prometheus_image: [REDACTED]/prom/prometheus:v2.51.1
+prometheus_image: prom/prometheus:v2.51.1
 
 prometheus_dir: /data/prometheus
 
